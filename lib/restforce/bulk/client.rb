@@ -7,7 +7,7 @@ module Restforce
 
       def connection
         @connection ||= (@restforce_client || Restforce.new).tap do |client|
-          client.authenticate!
+          # client.authenticate!
           client.middleware.insert_after Restforce::Middleware::Authorization, Restforce::Bulk::Middleware::Authorization, client, client.options
           client.middleware.response :xml, content_type: /\bxml$/
           client.middleware.use Restforce::Bulk::Middleware::ParseCsv, content_type: /\bcsv$/
