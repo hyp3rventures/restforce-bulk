@@ -8,7 +8,9 @@ module Restforce
           self.operation = operation
         end
 
-        def job(object_name, content_type)
+        def job(object_name, content_type, field_name)
+          return upsert_job(object_name, content_type, field_name) if upsert?
+
           build_xml(:jobInfo) do |xml|
             xml.operation operation
             xml.object object_name
@@ -49,6 +51,19 @@ module Restforce
         end
 
         protected
+
+        def upsert_job(object_name, content_type, field_name)
+          build_xml(:jobInfo) do |xml|
+            xml.operation operation
+            xml.object object_name
+            xml.externalIdFieldName field_name
+            xml.contentType content_type
+          end
+        end
+
+        def upsert?
+          operation == :upsert
+        end
 
         def build_xml(root, options={}, &block)
           Nokogiri::XML::Builder.new { |xml|
